@@ -13,7 +13,7 @@ extension Effect.Test {
     /// #expect(spy.callCount == 1)
     /// #expect(spy.invocations.first?.effect.someProperty == expectedProperty)
     /// ```
-    public final class Spy<E: EffectProtocol>: Sendable {
+    public final class Spy<E: __EffectProtocol>: Sendable {
         /// A recorded invocation of an effect.
         public struct Invocation: Sendable where E: Sendable {
             /// The effect that was performed.
@@ -89,9 +89,9 @@ extension Effect.Test {
     }
 }
 
-// MARK: - EffectHandler Conformance
+// MARK: - __EffectHandler Conformance
 
-extension Effect.Test.Spy: EffectHandler {
+extension Effect.Test.Spy: __EffectHandler {
     public typealias Handled = E
 
     public func handle(

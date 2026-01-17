@@ -7,7 +7,7 @@ extension Effect {
     ///
     /// In production, this delegates to `Task.yield()`.
     /// In tests, this can be controlled for deterministic behavior.
-    public struct Yield: EffectProtocol, EffectWithHandler, Sendable {
+    public struct Yield: __EffectProtocol, EffectWithHandler, Sendable {
         public typealias Value = Void
         public typealias Failure = Never
         public typealias HandlerKey = Handler.Key
@@ -20,7 +20,7 @@ extension Effect {
 
 extension Effect.Yield {
     /// Handler for yield effects.
-    public struct Handler: EffectHandler, Sendable {
+    public struct Handler: __EffectHandler, Sendable {
         public typealias Handled = Effect.Yield
 
         private let _handle: @Sendable () async -> Void
@@ -52,7 +52,7 @@ extension Effect.Yield.Handler {
 
 extension Effect.Yield.Handler {
     /// Context key for registering yield handlers.
-    public struct Key: EffectContextKey {
+    public struct Key: Dependency.Key {
         public typealias Value = Effect.Yield.Handler
 
         public static var liveValue: Effect.Yield.Handler { .live }

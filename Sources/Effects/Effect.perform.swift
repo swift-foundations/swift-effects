@@ -10,7 +10,7 @@ extension Effect {
     /// - Returns: The value produced by the handler.
     /// - Throws: The error produced by the handler, if any.
     @inlinable
-    public static func perform<E: EffectProtocol>(
+    public static func perform<E: __EffectProtocol>(
         _ effect: E
     ) async throws(E.Failure) -> E.Value
     where E: EffectWithHandler {
@@ -51,7 +51,7 @@ extension Effect {
     /// - Parameter effect: The effect to perform.
     /// - Returns: The value produced by the handler.
     @inlinable
-    public static func perform<E: EffectProtocol>(
+    public static func perform<E: __EffectProtocol>(
         _ effect: E
     ) async -> E.Value
     where E: EffectWithHandler, E.Failure == Never {

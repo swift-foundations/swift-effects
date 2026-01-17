@@ -16,10 +16,10 @@ extension Effect.Test {
         /// A type-erased recorded invocation.
         public struct Invocation: Sendable {
             /// The type of effect that was performed.
-            public let effectType: any EffectProtocol.Type
+            public let effectType: any __EffectProtocol.Type
 
             /// The effect that was performed, type-erased.
-            public let effect: any EffectProtocol
+            public let effect: any __EffectProtocol
 
             /// The time at which the effect was handled.
             public let timestamp: ContinuousClock.Instant
@@ -28,8 +28,8 @@ extension Effect.Test {
             public let succeeded: Bool
 
             public init(
-                effectType: any EffectProtocol.Type,
-                effect: any EffectProtocol,
+                effectType: any __EffectProtocol.Type,
+                effect: any __EffectProtocol,
                 timestamp: ContinuousClock.Instant,
                 succeeded: Bool
             ) {
@@ -56,7 +56,7 @@ extension Effect.Test {
         public init() {}
 
         /// Records an invocation.
-        internal func record<E: EffectProtocol>(_ effect: E, succeeded: Bool) {
+        internal func record<E: __EffectProtocol>(_ effect: E, succeeded: Bool) {
             let invocation = Invocation(
                 effectType: E.self,
                 effect: effect,
@@ -72,14 +72,14 @@ extension Effect.Test {
         }
 
         /// Returns all invocations of a specific effect type.
-        public func invocations<E: EffectProtocol>(of type: E.Type) -> [E] {
+        public func invocations<E: __EffectProtocol>(of type: E.Type) -> [E] {
             _invocations.withLock {
                 $0.compactMap { $0.effect as? E }
             }
         }
 
         /// Returns the count of invocations of a specific effect type.
-        public func count<E: EffectProtocol>(of type: E.Type) -> Int {
+        public func count<E: __EffectProtocol>(of type: E.Type) -> Int {
             _invocations.withLock {
                 $0.filter { $0.effect is E }.count
             }
@@ -94,7 +94,7 @@ extension Effect.Test.Recorder {
     ///
     /// - Parameter inner: The handler to delegate to after recording.
     /// - Returns: A handler that records and delegates.
-    public func handler<E: EffectProtocol>(
+    public func handler<E: __EffectProtocol>(
         wrapping inner: Effect.Test.Handler<E>
     ) -> RecordingHandler<E> {
         RecordingHandler(recorder: self, inner: inner)
@@ -104,14 +104,14 @@ extension Effect.Test.Recorder {
     ///
     /// - Parameter value: The value to return for all effects.
     /// - Returns: A handler that records and returns the value.
-    public func handler<E: EffectProtocol>(
+    public func handler<E: __EffectProtocol>(
         returning value: E.Value
     ) -> RecordingHandler<E> where E.Failure == Never {
         RecordingHandler(recorder: self, inner: Effect.Test.Handler(returning: value))
     }
 
     /// A handler that records invocations to a recorder while delegating to an inner handler.
-    public struct RecordingHandler<E: EffectProtocol>: EffectHandler, Sendable {
+    public struct RecordingHandler<E: __EffectProtocol>: __EffectHandler, Sendable {
         public typealias Handled = E
 
         private let recorder: Effect.Test.Recorder

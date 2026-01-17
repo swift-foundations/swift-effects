@@ -11,7 +11,7 @@ extension Effect.Test {
     ///     .success(expectedValue)
     /// }
     /// ```
-    public struct Handler<E: EffectProtocol>: EffectHandler, Sendable {
+    public struct Handler<E: __EffectProtocol>: __EffectHandler, Sendable {
         public typealias Handled = E
 
         private let _handle: @Sendable (E) async -> Result<E.Value, E.Failure>
