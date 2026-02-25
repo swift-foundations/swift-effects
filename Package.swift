@@ -50,7 +50,25 @@ let package = Package(
                 "Effects",
                 .product(name: "Async Primitives", package: "swift-async-primitives")
             ]
-        )
+        ),
+        .testTarget(
+            name: "Effects Tests",
+            dependencies: [
+                "Effects",
+            ]
+        ),
+        .testTarget(
+            name: "Effects Built-in Tests",
+            dependencies: [
+                "Effects Built-in",
+            ]
+        ),
+        .testTarget(
+            name: "Effects Testing Tests",
+            dependencies: [
+                "Effects Testing",
+            ]
+        ),
     ],
     swiftLanguageModes: [.v6]
 )
@@ -61,6 +79,7 @@ for target in package.targets where ![.system, .binary, .plugin, .macro].contain
         .enableUpcomingFeature("ExistentialAny"),
         .enableUpcomingFeature("InternalImportsByDefault"),
         .enableUpcomingFeature("MemberImportVisibility"),
+        .enableUpcomingFeature("NonisolatedNonsendingByDefault"),
         .enableExperimentalFeature("Lifetimes"),
         .enableExperimentalFeature("SuppressedAssociatedTypes"),
         .enableExperimentalFeature("SuppressedAssociatedTypesWithDefaults"),
