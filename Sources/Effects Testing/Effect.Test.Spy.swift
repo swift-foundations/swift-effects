@@ -1,5 +1,6 @@
 public import Effects
 import Async_Primitives
+public import Clocks
 
 extension Effect.Test {
     /// A spy handler that records all invocations while delegating to an inner handler.
@@ -20,14 +21,14 @@ extension Effect.Test {
             public let effect: E
 
             /// The time at which the effect was handled.
-            public let timestamp: ContinuousClock.Instant
+            public let timestamp: Clock.Continuous.Instant
 
             /// The outcome of handling the effect.
             public let outcome: Effect.Outcome<E.Value, E.Failure>
 
             public init(
                 effect: E,
-                timestamp: ContinuousClock.Instant,
+                timestamp: Clock.Continuous.Instant,
                 outcome: Effect.Outcome<E.Value, E.Failure>
             ) {
                 self.effect = effect
@@ -76,7 +77,7 @@ extension Effect.Test {
         private func record(effect: E, outcome: Effect.Outcome<E.Value, E.Failure>) {
             let invocation = Invocation(
                 effect: effect,
-                timestamp: ContinuousClock.now,
+                timestamp: Clock.Continuous.now,
                 outcome: outcome
             )
             _invocations.withLock { $0.append(invocation) }

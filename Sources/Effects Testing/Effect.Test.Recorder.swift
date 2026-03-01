@@ -1,5 +1,6 @@
 public import Effects
 import Async_Primitives
+public import Clocks
 
 extension Effect.Test {
     /// A type-erased recorder that can record invocations of any effect type.
@@ -22,7 +23,7 @@ extension Effect.Test {
             public let effect: any __EffectProtocol
 
             /// The time at which the effect was handled.
-            public let timestamp: ContinuousClock.Instant
+            public let timestamp: Clock.Continuous.Instant
 
             /// Whether the effect completed successfully.
             public let succeeded: Bool
@@ -30,7 +31,7 @@ extension Effect.Test {
             public init(
                 effectType: any __EffectProtocol.Type,
                 effect: any __EffectProtocol,
-                timestamp: ContinuousClock.Instant,
+                timestamp: Clock.Continuous.Instant,
                 succeeded: Bool
             ) {
                 self.effectType = effectType
@@ -60,7 +61,7 @@ extension Effect.Test {
             let invocation = Invocation(
                 effectType: E.self,
                 effect: effect,
-                timestamp: ContinuousClock.now,
+                timestamp: Clock.Continuous.now,
                 succeeded: succeeded
             )
             _invocations.withLock { $0.append(invocation) }

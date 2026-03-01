@@ -28,7 +28,8 @@ let package = Package(
     dependencies: [
         .package(path: "../../swift-primitives/swift-effect-primitives"),
         .package(path: "../../swift-primitives/swift-dependency-primitives"),
-        .package(path: "../../swift-primitives/swift-async-primitives")
+        .package(path: "../../swift-primitives/swift-async-primitives"),
+        .package(path: "../swift-clocks"),
     ],
     targets: [
         .target(
@@ -48,7 +49,8 @@ let package = Package(
             name: "Effects Testing",
             dependencies: [
                 "Effects",
-                .product(name: "Async Primitives", package: "swift-async-primitives")
+                .product(name: "Async Primitives", package: "swift-async-primitives"),
+                .product(name: "Clocks", package: "swift-clocks")
             ]
         ),
         .testTarget(
