@@ -1,4 +1,5 @@
 public import Effects
+public import Witness_Primitives
 
 // MARK: - Yield Effect
 
@@ -20,7 +21,7 @@ extension Effect {
 
 extension Effect.Yield {
     /// Handler for yield effects.
-    public struct Handler: __EffectHandler, Sendable {
+    public struct Handler: __EffectHandler, Sendable, Witness.`Protocol` {
         public typealias Handled = Effect.Yield
 
         private let _handle: @Sendable () async -> Void

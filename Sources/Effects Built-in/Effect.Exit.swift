@@ -1,4 +1,5 @@
 public import Effects
+public import Witness_Primitives
 
 // MARK: - Exit Effect
 
@@ -28,7 +29,7 @@ extension Effect {
 
 extension Effect.Exit {
     /// Handler for exit effects.
-    public struct Handler: __EffectHandler, Sendable {
+    public struct Handler: __EffectHandler, Sendable, Witness.`Protocol` {
         public typealias Handled = Effect.Exit
 
         private let _handle: @Sendable (Int32) async -> Never

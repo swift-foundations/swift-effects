@@ -28,6 +28,7 @@ let package = Package(
     dependencies: [
         .package(path: "../../swift-primitives/swift-effect-primitives"),
         .package(path: "../../swift-primitives/swift-dependency-primitives"),
+        .package(path: "../../swift-primitives/swift-witness-primitives"),
         .package(path: "../../swift-primitives/swift-async-primitives"),
         .package(path: "../swift-clocks"),
     ],
@@ -42,7 +43,8 @@ let package = Package(
         .target(
             name: "Effects Built-in",
             dependencies: [
-                "Effects"
+                "Effects",
+                .product(name: "Witness Primitives", package: "swift-witness-primitives"),
             ]
         ),
         .target(
