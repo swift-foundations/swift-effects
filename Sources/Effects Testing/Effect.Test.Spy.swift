@@ -70,7 +70,7 @@ extension Effect.Test {
         /// Creates a spy with a custom handling closure.
         ///
         /// - Parameter handle: A closure that receives the effect and returns a result.
-        public init(_ handle: @escaping @Sendable (E) async -> Result<E.Value, E.Failure>) {
+        public init(_ handle: @escaping @Sendable (E) async -> Swift.Result<E.Value, E.Failure>) {
             self.inner = Effect.Test.Handler(handle)
         }
 
