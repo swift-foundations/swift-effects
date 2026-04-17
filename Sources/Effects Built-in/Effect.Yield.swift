@@ -8,7 +8,7 @@ extension Effect {
     ///
     /// In production, this delegates to `Task.yield()`.
     /// In tests, this can be controlled for deterministic behavior.
-    public struct Yield: __EffectProtocol, EffectWithHandler, Sendable {
+    public struct Yield: Effect.`Protocol`, EffectWithHandler, Sendable {
         public typealias Value = Void
         public typealias Failure = Never
         public typealias HandlerKey = Handler.Key
@@ -21,7 +21,7 @@ extension Effect {
 
 extension Effect.Yield {
     /// Handler for yield effects.
-    public struct Handler: __EffectHandler, Sendable, Witness.`Protocol` {
+    public struct Handler: Effect.Handler.`Protocol`, Sendable, Witness.`Protocol` {
         public typealias Handled = Effect.Yield
 
         private let _handle: @Sendable () async -> Void
@@ -31,7 +31,7 @@ extension Effect.Yield {
         }
 
         public func handle(
-            _ effect: Effect.Yield,
+            _ effect: borrowing Effect.Yield,
             continuation: consuming Effect.Continuation.One<Void, Never>
         ) async {
             await _handle()

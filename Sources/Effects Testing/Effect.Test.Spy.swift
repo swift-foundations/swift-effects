@@ -14,9 +14,10 @@ extension Effect.Test {
     /// #expect(spy.callCount == 1)
     /// #expect(spy.invocations.first?.effect.someProperty == expectedProperty)
     /// ```
-    public final class Spy<E: __EffectProtocol>: Sendable {
+    public final class Spy<E: Effect.`Protocol`>: Sendable
+    where E: Sendable, E.Value: Copyable {
         /// A recorded invocation of an effect.
-        public struct Invocation: Sendable where E: Sendable {
+        public struct Invocation: Sendable {
             /// The effect that was performed.
             public let effect: E
 
@@ -90,19 +91,20 @@ extension Effect.Test {
     }
 }
 
-// MARK: - __EffectHandler Conformance
+// MARK: - Effect.Handler.Protocol Conformance
 
-extension Effect.Test.Spy: __EffectHandler {
+extension Effect.Test.Spy: Effect.Handler.`Protocol` {
     public typealias Handled = E
 
     public func handle(
-        _ effect: E,
+        _ effect: borrowing E,
         continuation: consuming Effect.Continuation.One<E.Value, E.Failure>
     ) async {
-        // Wrap the continuation to intercept and record the outcome
+        // Copy the borrow for closure capture; E is Copyable & Sendable here.
+        let recordedEffect = copy effect
         let wrapped = continuation.onResume { [weak self] result in
             let outcome = Effect.Outcome(result)
-            self?.record(effect: effect, outcome: outcome)
+            self?.record(effect: recordedEffect, outcome: outcome)
         }
 
         await inner.handle(effect, continuation: wrapped)

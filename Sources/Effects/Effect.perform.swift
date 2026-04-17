@@ -1,5 +1,5 @@
 public import Effect_Primitives
-public import Dependency_Primitives
+import Dependency_Primitives
 
 extension Effect {
     /// Performs an effect by looking up its handler from the current context.
@@ -10,34 +10,35 @@ extension Effect {
     /// - Returns: The value produced by the handler.
     /// - Throws: The error produced by the handler, if any.
     @inlinable
-    public static func perform<E: __EffectProtocol>(
+    public static func perform<E: Effect.`Protocol`>(
         _ effect: E
     ) async throws(E.Failure) -> E.Value
-    where E: EffectWithHandler {
+    where
+        E: EffectWithHandler,
+        E.Value: Copyable,
+        E.HandlerKey.Value: Copyable
+    {
         let handler = Effect.Context.current[E.HandlerKey.self]
 
-        do {
-            return try await withCheckedThrowingContinuation(isolation: nil) {
-                (swiftContinuation: CheckedContinuation<E.Value, any Error>) in
+        // Result-wrapping workaround: stdlib's withCheckedThrowingContinuation
+        // throws `any Error`, which erases the typed E.Failure and previously
+        // forced a `throw error as! E.Failure` force-cast. Deliver the outcome
+        // as a Result through a non-throwing CheckedContinuation and call
+        // `.get()` outside, matching Dependency.Scope.with for the same reason.
+        let result: Result<E.Value, E.Failure> = await withCheckedContinuation(isolation: nil) {
+            (swiftContinuation: CheckedContinuation<Result<E.Value, E.Failure>, Never>) in
 
-                // Create effectContinuation inside Task to avoid move-only capture issues
-                Task {
-                    let effectContinuation = Effect.Continuation.one {
-                        @Sendable (result: Result<E.Value, E.Failure>) async in
-                        switch result {
-                        case .success(let value):
-                            swiftContinuation.resume(returning: value)
-                        case .failure(let error):
-                            swiftContinuation.resume(throwing: error)
-                        }
-                    }
-
-                    await handler.handle(effect, continuation: effectContinuation)
+            Task {
+                let effectContinuation = Effect.Continuation.one {
+                    @Sendable (result: Result<E.Value, E.Failure>) async in
+                    swiftContinuation.resume(returning: result)
                 }
+
+                await handler.handle(effect, continuation: effectContinuation)
             }
-        } catch {
-            throw error as! E.Failure
         }
+
+        return try result.get()
     }
 }
 
@@ -51,16 +52,20 @@ extension Effect {
     /// - Parameter effect: The effect to perform.
     /// - Returns: The value produced by the handler.
     @inlinable
-    public static func perform<E: __EffectProtocol>(
+    public static func perform<E: Effect.`Protocol`>(
         _ effect: E
     ) async -> E.Value
-    where E: EffectWithHandler, E.Failure == Never {
+    where
+        E: EffectWithHandler,
+        E.Failure == Never,
+        E.Value: Copyable,
+        E.HandlerKey.Value: Copyable
+    {
         let handler = Effect.Context.current[E.HandlerKey.self]
 
         return await withCheckedContinuation(isolation: nil) {
             (swiftContinuation: CheckedContinuation<E.Value, Never>) in
 
-            // Create effectContinuation inside Task to avoid move-only capture issues
             Task {
                 let effectContinuation = Effect.Continuation.one {
                     @Sendable (result: Result<E.Value, Never>) async in

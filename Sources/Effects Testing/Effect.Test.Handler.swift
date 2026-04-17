@@ -11,10 +11,12 @@ extension Effect.Test {
     ///     .success(expectedValue)
     /// }
     /// ```
-    public struct Handler<E: __EffectProtocol>: __EffectHandler, Sendable {
+    public struct Handler<E: Effect.`Protocol`>: Effect.Handler.`Protocol`, Sendable
+    where E: Sendable, E.Value: Copyable {
         public typealias Handled = E
 
-        private let _handle: @Sendable (E) async -> Result<E.Value, E.Failure>
+        @usableFromInline
+        internal let _handle: @Sendable (E) async -> Result<E.Value, E.Failure>
 
         /// Creates a handler with a custom handling closure.
         ///
@@ -24,7 +26,7 @@ extension Effect.Test {
         }
 
         public func handle(
-            _ effect: E,
+            _ effect: borrowing E,
             continuation: consuming Effect.Continuation.One<E.Value, E.Failure>
         ) async {
             let result = await _handle(effect)

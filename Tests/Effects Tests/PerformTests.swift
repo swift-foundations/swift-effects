@@ -6,12 +6,12 @@ import Dependency_Primitives
 @Test
 func performReturnsHandlerValue() async {
     // Define a simple test effect
-    struct TestEffect: EffectProtocol, EffectWithHandler {
+    struct TestEffect: Effect.`Protocol`, EffectWithHandler {
         typealias Value = Int
         typealias Failure = Never
         typealias HandlerKey = Key
 
-        struct Key: EffectContextKey {
+        struct Key: Dependency.Key {
             typealias Value = Effect.Test.Handler<TestEffect>
             static var liveValue: Effect.Test.Handler<TestEffect> {
                 Effect.Test.Handler(returning: 0)
@@ -35,12 +35,12 @@ func performReturnsHandlerValue() async {
 func performThrowsHandlerError() async throws {
     struct TestError: Error, Equatable {}
 
-    struct TestEffect: EffectProtocol, EffectWithHandler {
+    struct TestEffect: Effect.`Protocol`, EffectWithHandler {
         typealias Value = Int
         typealias Failure = TestError
         typealias HandlerKey = Key
 
-        struct Key: EffectContextKey {
+        struct Key: Dependency.Key {
             typealias Value = Effect.Test.Handler<TestEffect>
             static var liveValue: Effect.Test.Handler<TestEffect> {
                 Effect.Test.Handler(throwing: TestError())

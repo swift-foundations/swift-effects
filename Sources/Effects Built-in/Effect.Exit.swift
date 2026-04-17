@@ -11,7 +11,7 @@ extension Effect {
     ///
     /// - Note: The live handler must be provided by platform-specific code (e.g., swift-darwin, swift-linux).
     ///   The default live handler uses `fatalError` as a cross-platform fallback.
-    public struct Exit: __EffectProtocol, EffectWithHandler, Sendable {
+    public struct Exit: Effect.`Protocol`, EffectWithHandler, Sendable {
         public typealias Value = Never
         public typealias Failure = Never
         public typealias HandlerKey = Handler.Key
@@ -29,7 +29,7 @@ extension Effect {
 
 extension Effect.Exit {
     /// Handler for exit effects.
-    public struct Handler: __EffectHandler, Sendable, Witness.`Protocol` {
+    public struct Handler: Effect.Handler.`Protocol`, Sendable, Witness.`Protocol` {
         public typealias Handled = Effect.Exit
 
         private let _handle: @Sendable (Int32) async -> Never
@@ -39,7 +39,7 @@ extension Effect.Exit {
         }
 
         public func handle(
-            _ effect: Effect.Exit,
+            _ effect: borrowing Effect.Exit,
             continuation: consuming Effect.Continuation.One<Never, Never>
         ) async {
             // The handler calls exit, which never returns.

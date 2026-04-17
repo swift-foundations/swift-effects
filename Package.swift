@@ -52,7 +52,7 @@ let package = Package(
             dependencies: [
                 "Effects",
                 .product(name: "Async Primitives", package: "swift-async-primitives"),
-                .product(name: "Clocks", package: "swift-clocks")
+                .product(name: "Clocks", package: "swift-clocks"),
             ]
         ),
         .testTarget(

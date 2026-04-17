@@ -17,10 +17,10 @@ extension Effect.Test {
         /// A type-erased recorded invocation.
         public struct Invocation: Sendable {
             /// The type of effect that was performed.
-            public let effectType: any __EffectProtocol.Type
+            public let effectType: any Effect.`Protocol`.Type
 
             /// The effect that was performed, type-erased.
-            public let effect: any __EffectProtocol
+            public let effect: any Effect.`Protocol`
 
             /// The time at which the effect was handled.
             public let timestamp: Clock.Continuous.Instant
@@ -29,8 +29,8 @@ extension Effect.Test {
             public let succeeded: Bool
 
             public init(
-                effectType: any __EffectProtocol.Type,
-                effect: any __EffectProtocol,
+                effectType: any Effect.`Protocol`.Type,
+                effect: any Effect.`Protocol`,
                 timestamp: Clock.Continuous.Instant,
                 succeeded: Bool
             ) {
@@ -57,7 +57,7 @@ extension Effect.Test {
         public init() {}
 
         /// Records an invocation.
-        internal func record<E: __EffectProtocol>(_ effect: E, succeeded: Bool) {
+        internal func record<E: Effect.`Protocol`>(_ effect: E, succeeded: Bool) {
             let invocation = Invocation(
                 effectType: E.self,
                 effect: effect,
@@ -73,14 +73,14 @@ extension Effect.Test {
         }
 
         /// Returns all invocations of a specific effect type.
-        public func invocations<E: __EffectProtocol>(of type: E.Type) -> [E] {
+        public func invocations<E: Effect.`Protocol`>(of type: E.Type) -> [E] {
             _invocations.withLock {
                 $0.compactMap { $0.effect as? E }
             }
         }
 
         /// Returns the count of invocations of a specific effect type.
-        public func count<E: __EffectProtocol>(of type: E.Type) -> Int {
+        public func count<E: Effect.`Protocol`>(of type: E.Type) -> Int {
             _invocations.withLock {
                 $0.filter { $0.effect is E }.count
             }
@@ -95,9 +95,9 @@ extension Effect.Test.Recorder {
     ///
     /// - Parameter inner: The handler to delegate to after recording.
     /// - Returns: A handler that records and delegates.
-    public func handler<E: __EffectProtocol>(
+    public func handler<E: Effect.`Protocol`>(
         wrapping inner: Effect.Test.Handler<E>
-    ) -> RecordingHandler<E> {
+    ) -> RecordingHandler<E> where E: Sendable, E.Value: Copyable {
         RecordingHandler(recorder: self, inner: inner)
     }
 
@@ -105,14 +105,16 @@ extension Effect.Test.Recorder {
     ///
     /// - Parameter value: The value to return for all effects.
     /// - Returns: A handler that records and returns the value.
-    public func handler<E: __EffectProtocol>(
+    public func handler<E: Effect.`Protocol`>(
         returning value: E.Value
-    ) -> RecordingHandler<E> where E.Failure == Never {
+    ) -> RecordingHandler<E>
+    where E: Sendable, E.Value: Copyable, E.Failure == Never {
         RecordingHandler(recorder: self, inner: Effect.Test.Handler(returning: value))
     }
 
     /// A handler that records invocations to a recorder while delegating to an inner handler.
-    public struct RecordingHandler<E: __EffectProtocol>: __EffectHandler, Sendable {
+    public struct RecordingHandler<E: Effect.`Protocol`>: Effect.Handler.`Protocol`, Sendable
+    where E: Sendable, E.Value: Copyable {
         public typealias Handled = E
 
         private let recorder: Effect.Test.Recorder
@@ -124,17 +126,18 @@ extension Effect.Test.Recorder {
         }
 
         public func handle(
-            _ effect: E,
+            _ effect: borrowing E,
             continuation: consuming Effect.Continuation.One<E.Value, E.Failure>
         ) async {
-            // Wrap the continuation to intercept and record the outcome
+            // Copy the borrow for closure capture; E is Copyable & Sendable here.
+            let recordedEffect = copy effect
             let wrapped = continuation.onResume { [recorder] result in
                 let succeeded: Bool
                 switch result {
                 case .success: succeeded = true
                 case .failure: succeeded = false
                 }
-                recorder.record(effect, succeeded: succeeded)
+                recorder.record(recordedEffect, succeeded: succeeded)
             }
 
             await inner.handle(effect, continuation: wrapped)

@@ -2,7 +2,7 @@ import Testing
 import Effects
 import Effects_Testing
 
-struct CountEffect: EffectProtocol {
+struct CountEffect: Effect.`Protocol` {
     typealias Value = Int
     typealias Failure = Never
 
