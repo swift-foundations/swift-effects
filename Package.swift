@@ -59,12 +59,15 @@ let package = Package(
             name: "Effects Tests",
             dependencies: [
                 "Effects",
+                "Effects Testing",
             ]
         ),
         .testTarget(
             name: "Effects Built-in Tests",
             dependencies: [
                 "Effects Built-in",
+                "Effects Testing",
+                .product(name: "Async Primitives", package: "swift-async-primitives"),
             ]
         ),
         .testTarget(
