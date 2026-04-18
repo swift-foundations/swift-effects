@@ -1,0 +1,21 @@
+{
+  "$schema": "https://swift-institute.org/schemas/research-index-v1.json",
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-04-18",
+  "title": "Research Index — swift-effects",
+  "blurb": "",
+  "scope": "swift-effects (swift-foundations)",
+  "documents": [
+    {
+      "file": "audit.md",
+      "displayName": "audit.md",
+      "topic": "Legacy modularization audit findings (MOD-001 through MOD-014)",
+      "date": "2026-04-08",
+      "status": "LEGACY",
+      "statusDetail": null,
+      "statusRaw": "LEGACY",
+      "tier": null,
+      "scope": null
+    }
+  ]
+}
