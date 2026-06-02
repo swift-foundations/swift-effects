@@ -26,11 +26,11 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(path: "../../swift-primitives/swift-effect-primitives"),
-        .package(path: "../../swift-primitives/swift-dependency-primitives"),
-        .package(path: "../../swift-primitives/swift-witness-primitives"),
-        .package(path: "../../swift-primitives/swift-async-primitives"),
-        .package(path: "../swift-clocks"),
+        .package(url: "https://github.com/swift-primitives/swift-effect-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-primitives/swift-dependency-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-primitives/swift-witness-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-primitives/swift-async-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-foundations/swift-clocks.git", branch: "main"),
     ],
     targets: [
         .target(
