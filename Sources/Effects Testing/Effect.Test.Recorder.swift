@@ -20,7 +20,7 @@ extension Effect.Test {
             public let effectType: any Effect.`Protocol`.Type
 
             /// The effect that was performed, type-erased.
-            public let effect: any Effect.`Protocol`
+            public let effect: any Effect.`Protocol` & Sendable
 
             /// The time at which the effect was handled.
             public let timestamp: Clock.Continuous.Instant
@@ -30,7 +30,7 @@ extension Effect.Test {
 
             public init(
                 effectType: any Effect.`Protocol`.Type,
-                effect: any Effect.`Protocol`,
+                effect: any Effect.`Protocol` & Sendable,
                 timestamp: Clock.Continuous.Instant,
                 succeeded: Bool
             ) {
@@ -57,7 +57,7 @@ extension Effect.Test {
         public init() {}
 
         /// Records an invocation.
-        internal func record<E: Effect.`Protocol`>(_ effect: E, succeeded: Bool) {
+        internal func record<E: Effect.`Protocol`>(_ effect: E, succeeded: Bool) where E: Sendable {
             let invocation = Invocation(
                 effectType: E.self,
                 effect: effect,
@@ -97,7 +97,7 @@ extension Effect.Test.Recorder {
     /// - Returns: A handler that records and delegates.
     public func handler<E: Effect.`Protocol`>(
         wrapping inner: Effect.Test.Handler<E>
-    ) -> RecordingHandler<E> where E: Sendable, E.Value: Copyable {
+    ) -> RecordingHandler<E> where E: Sendable, E.Value: Copyable & Sendable {
         RecordingHandler(recorder: self, inner: inner)
     }
 
@@ -108,13 +108,13 @@ extension Effect.Test.Recorder {
     public func handler<E: Effect.`Protocol`>(
         returning value: E.Value
     ) -> RecordingHandler<E>
-    where E: Sendable, E.Value: Copyable, E.Failure == Never {
+    where E: Sendable, E.Value: Copyable & Sendable, E.Failure == Never {
         RecordingHandler(recorder: self, inner: Effect.Test.Handler(returning: value))
     }
 
     /// A handler that records invocations to a recorder while delegating to an inner handler.
     public struct RecordingHandler<E: Effect.`Protocol`>: Effect.Handler.`Protocol`, Sendable
-    where E: Sendable, E.Value: Copyable {
+    where E: Sendable, E.Value: Copyable & Sendable {
         public typealias Handled = E
 
         private let recorder: Effect.Test.Recorder

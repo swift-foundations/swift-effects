@@ -15,7 +15,7 @@ extension Effect.Test {
     /// #expect(spy.invocations.first?.effect.someProperty == expectedProperty)
     /// ```
     public final class Spy<E: Effect.`Protocol`>: Sendable
-    where E: Sendable, E.Value: Copyable {
+    where E: Sendable, E.Value: Copyable & Sendable {
         /// A recorded invocation of an effect.
         public struct Invocation: Sendable {
             /// The effect that was performed.

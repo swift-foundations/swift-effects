@@ -12,7 +12,7 @@ extension Effect.Test {
     /// }
     /// ```
     public struct Handler<E: Effect.`Protocol`>: Effect.Handler.`Protocol`, Sendable
-    where E: Sendable, E.Value: Copyable {
+    where E: Sendable, E.Value: Copyable & Sendable {
         public typealias Handled = E
 
         @usableFromInline
