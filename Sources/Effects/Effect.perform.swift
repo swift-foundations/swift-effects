@@ -1,5 +1,5 @@
-public import Effect_Primitives
 import Dependency_Primitives
+public import Effect_Primitives
 
 extension Effect {
     /// Performs an effect by looking up its handler from the current context.

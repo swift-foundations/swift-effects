@@ -1,5 +1,5 @@
-import Testing
 import Effects_Built_in
+import Testing
 
 @Test
 func exitEffectHasCorrectCode() {

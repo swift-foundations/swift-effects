@@ -1,6 +1,6 @@
-import Testing
 import Effects
 import Effects_Testing
+import Testing
 
 struct TestEffect: Effect.`Protocol` {
     typealias Value = String

@@ -1,5 +1,5 @@
-public import Effect_Primitives
 public import Dependency_Primitives
+public import Effect_Primitives
 
 /// Links an effect type to its handler key for automatic lookup.
 ///
@@ -8,5 +8,5 @@ public import Dependency_Primitives
 public protocol EffectWithHandler: Effect.`Protocol` {
     /// The context key type that provides the handler for this effect.
     associatedtype HandlerKey: Dependency.Key
-        where HandlerKey.Value: Effect.Handler.`Protocol`, HandlerKey.Value.Handled == Self
+    where HandlerKey.Value: Effect.Handler.`Protocol`, HandlerKey.Value.Handled == Self
 }

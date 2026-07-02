@@ -1,6 +1,6 @@
-public import Effects
 import Async_Primitives
 public import Clocks
+public import Effects
 
 extension Effect.Test {
     /// A type-erased recorder that can record invocations of any effect type.

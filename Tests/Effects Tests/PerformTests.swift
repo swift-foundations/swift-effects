@@ -1,7 +1,7 @@
-import Testing
+import Dependency_Primitives
 import Effects
 import Effects_Testing
-import Dependency_Primitives
+import Testing
 
 @Test
 func performReturnsHandlerValue() async {
@@ -22,11 +22,14 @@ func performReturnsHandlerValue() async {
 
     let handler = Effect.Test.Handler<TestEffect>(returning: 42)
 
-    let result = await Effect.Context.with({ handlers in
-        handlers[TestEffect.Key.self] = handler
-    }) {
-        await Effect.perform(TestEffect())
-    }
+    let result = await Effect.Context.with(
+        { handlers in
+            handlers[TestEffect.Key.self] = handler
+        },
+        operation: {
+            await Effect.perform(TestEffect())
+        }
+    )
 
     #expect(result == 42)
 }
@@ -52,11 +55,14 @@ func performThrowsHandlerError() async throws {
     let handler = Effect.Test.Handler<TestEffect>(throwing: TestError())
 
     do {
-        _ = try await Effect.Context.with({ handlers in
-            handlers[TestEffect.Key.self] = handler
-        }) {
-            try await Effect.perform(TestEffect())
-        }
+        _ = try await Effect.Context.with(
+            { handlers in
+                handlers[TestEffect.Key.self] = handler
+            },
+            operation: {
+                try await Effect.perform(TestEffect())
+            }
+        )
         Issue.record("Expected error to be thrown")
     } catch {
         #expect(error is TestError)

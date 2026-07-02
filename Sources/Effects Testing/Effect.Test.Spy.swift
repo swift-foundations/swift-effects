@@ -1,6 +1,6 @@
-public import Effects
 import Async_Primitives
 public import Clocks
+public import Effects
 
 extension Effect.Test {
     /// A spy handler that records all invocations while delegating to an inner handler.
