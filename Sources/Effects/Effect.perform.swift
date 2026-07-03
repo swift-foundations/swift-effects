@@ -18,7 +18,7 @@ extension Effect {
         E.Value: Copyable,
         E.HandlerKey.Value: Copyable
     {
-        let handler = Effect.Context.current[E.HandlerKey.self]
+        let handler = Self.Context.current[E.HandlerKey.self]
 
         // SAFETY ([MEM-SEND-008], [MEM-SEND-011]): `effect` is dispatched to the
         // handler on the Task below, which runs while the calling task is
@@ -31,7 +31,7 @@ extension Effect {
         // `effect` crosses into the Task region via an `@unchecked Sendable`
         // transfer intermediary rather than a `Sendable` bound ([MEM-SEND-012]).
         // The resumed value crosses back via the `sending` callback parameter.
-        let transfer = Effect.Perform.Transfer(effect)
+        let transfer = Self.Perform.Transfer(effect)
 
         // Result-wrapping workaround: stdlib's withCheckedThrowingContinuation
         // throws `any Error`, which erases the typed E.Failure and previously
@@ -42,7 +42,7 @@ extension Effect {
             (swiftContinuation: CheckedContinuation<Result<E.Value, E.Failure>, Never>) in
 
             Task {
-                let effectContinuation = Effect.Continuation.one {
+                let effectContinuation = Self.Continuation.one {
                     @Sendable (result: sending Result<E.Value, E.Failure>) async in
                     swiftContinuation.resume(returning: result)
                 }
@@ -74,20 +74,20 @@ extension Effect {
         E.Value: Copyable,
         E.HandlerKey.Value: Copyable
     {
-        let handler = Effect.Context.current[E.HandlerKey.self]
+        let handler = Self.Context.current[E.HandlerKey.self]
 
         // SAFETY ([MEM-SEND-008], [MEM-SEND-011]): see the fallible overload above
         // — `effect` is touched only inside the Task while the caller is suspended
         // on `swiftContinuation`, which resumes exactly once. It crosses into the
         // Task region via an `@unchecked Sendable` transfer intermediary; the
         // value crosses back via the `sending` callback parameter ([MEM-SEND-012]).
-        let transfer = Effect.Perform.Transfer(effect)
+        let transfer = Self.Perform.Transfer(effect)
 
         return await withCheckedContinuation(isolation: nil) {
             (swiftContinuation: CheckedContinuation<E.Value, Never>) in
 
             Task {
-                let effectContinuation = Effect.Continuation.one {
+                let effectContinuation = Self.Continuation.one {
                     @Sendable (result: sending Result<E.Value, Never>) async in
                     switch result {
                     case .success(let value):

@@ -36,7 +36,7 @@ func performReturnsHandlerValue() async {
 
 @Test
 func performThrowsHandlerError() async throws {
-    struct TestError: Error, Equatable {}
+    struct TestError: Swift.Error, Equatable {}
 
     struct TestEffect: Effect.`Protocol`, EffectWithHandler {
         typealias Value = Int

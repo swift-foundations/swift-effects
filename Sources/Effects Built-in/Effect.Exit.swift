@@ -81,7 +81,13 @@ extension Effect.Exit.Handler {
                 // Tests should use task cancellation or timeouts to handle this.
                 while true {
                     await Task.yield()
-                    try? await Task.sleep(for: .seconds(3600))
+                    do {
+                        try await Task.sleep(for: .seconds(3600))
+                    } catch {
+                        // Cancellation (or any other Task.sleep failure) —
+                        // the loop simply retries, matching the previous
+                        // `try?` swallow-and-continue behavior.
+                    }
                 }
             }
         }
