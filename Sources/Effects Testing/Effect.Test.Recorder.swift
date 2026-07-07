@@ -14,6 +14,9 @@ extension Effect.Test {
     /// #expect(recorder.count == 3)
     /// ```
     public final class Recorder: Sendable {
+        // Deliberate type erasure: this recorder records invocations across
+        // heterogeneous effect types in a single collection (see class doc above).
+        // swiftlint:disable no_any_protocol_existential
         /// A type-erased recorded invocation.
         public struct Invocation: Sendable {
             /// The type of effect that was performed.
@@ -40,6 +43,7 @@ extension Effect.Test {
                 self.succeeded = succeeded
             }
         }
+        // swiftlint:enable no_any_protocol_existential
 
         private let _invocations: Async.Mutex<[Invocation]> = Async.Mutex([])
 

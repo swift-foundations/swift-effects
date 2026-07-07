@@ -9,7 +9,7 @@ extension Effect {
     /// In production, the handler calls the system exit function and never returns.
     /// In tests, this can be intercepted to verify exit behavior without terminating.
     ///
-    /// - Note: The live handler must be provided by platform-specific code (e.g., swift-darwin, swift-linux).
+    /// - Note: The live handler must be provided by platform-specific code, such as swift-darwin or swift-linux.
     ///   The default live handler uses `fatalError` as a cross-platform fallback.
     public struct Exit: Effect.`Protocol`, EffectWithHandler, Sendable {
         public typealias Value = Never
@@ -55,7 +55,7 @@ extension Effect.Exit {
 extension Effect.Exit.Handler {
     /// The default live handler that terminates using fatalError.
     ///
-    /// Platform-specific packages (swift-darwin, swift-linux, etc.) should provide
+    /// Platform-specific packages, such as swift-darwin or swift-linux, should provide
     /// handlers that call the actual system exit function.
     public static let live = Effect.Exit.Handler { code in
         fatalError("Exit with code \(code)")

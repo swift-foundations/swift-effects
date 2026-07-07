@@ -10,6 +10,9 @@ extension Effect {
     /// - Returns: The value produced by the handler.
     /// - Throws: The error produced by the handler, if any.
     @inlinable
+    // Generic-parameter constraint: `Self` would demand identity (only
+    // `Effect` itself), not conformance to `Effect.Protocol` for any E.
+    // swiftlint:disable:next prefer_self_in_static_references
     public static func perform<E: Effect.`Protocol`>(
         _ effect: E
     ) async throws(E.Failure) -> E.Value
@@ -65,6 +68,9 @@ extension Effect {
     /// - Parameter effect: The effect to perform.
     /// - Returns: The value produced by the handler.
     @inlinable
+    // Generic-parameter constraint: `Self` would demand identity (only
+    // `Effect` itself), not conformance to `Effect.Protocol` for any E.
+    // swiftlint:disable:next prefer_self_in_static_references
     public static func perform<E: Effect.`Protocol`>(
         _ effect: E
     ) async -> E.Value
