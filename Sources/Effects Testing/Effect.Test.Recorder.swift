@@ -14,80 +14,84 @@ extension Effect.Test {
     /// #expect(recorder.count == 3)
     /// ```
     public final class Recorder: Sendable {
-        // Deliberate type erasure: this recorder records invocations across
-        // heterogeneous effect types in a single collection (see class doc above).
-        // swiftlint:disable no_any_protocol_existential
-        /// A type-erased recorded invocation.
-        public struct Invocation: Sendable {
-            /// The type of effect that was performed.
-            public let effectType: any Effect.`Protocol`.Type
-
-            /// The effect that was performed, type-erased.
-            public let effect: any Effect.`Protocol` & Sendable
-
-            /// The time at which the effect was handled.
-            public let timestamp: Clock.Continuous.Instant
-
-            /// Whether the effect completed successfully.
-            public let succeeded: Bool
-
-            public init(
-                effectType: any Effect.`Protocol`.Type,
-                effect: any Effect.`Protocol` & Sendable,
-                timestamp: Clock.Continuous.Instant,
-                succeeded: Bool
-            ) {
-                self.effectType = effectType
-                self.effect = effect
-                self.timestamp = timestamp
-                self.succeeded = succeeded
-            }
-        }
-        // swiftlint:enable no_any_protocol_existential
-
         private let _invocations: Async.Mutex<[Invocation]> = Async.Mutex([])
-
-        /// All recorded invocations.
-        public var invocations: [Invocation] {
-            _invocations.withLock { $0 }
-        }
-
-        /// The number of recorded invocations.
-        public var count: Int {
-            _invocations.withLock { $0.count }
-        }
 
         /// Creates a new recorder.
         public init() {}
+    }
+}
 
-        /// Records an invocation.
-        internal func record<E: Effect.`Protocol`>(_ effect: E, succeeded: Bool) where E: Sendable {
-            let invocation = Invocation(
-                effectType: E.self,
-                effect: effect,
-                timestamp: Clock.Continuous.now,
-                succeeded: succeeded
-            )
-            _invocations.withLock { $0.append(invocation) }
+extension Effect.Test.Recorder {
+    // Deliberate type erasure: this recorder records invocations across
+    // heterogeneous effect types in a single collection (see class doc above).
+    // swiftlint:disable no_any_protocol_existential
+    /// A type-erased recorded invocation.
+    public struct Invocation: Sendable {
+        /// The type of effect that was performed.
+        public let effectType: any Effect.`Protocol`.Type
+
+        /// The effect that was performed, type-erased.
+        public let effect: any Effect.`Protocol` & Sendable
+
+        /// The time at which the effect was handled.
+        public let timestamp: Clock.Continuous.Instant
+
+        /// Whether the effect completed successfully.
+        public let succeeded: Bool
+
+        public init(
+            effectType: any Effect.`Protocol`.Type,
+            effect: any Effect.`Protocol` & Sendable,
+            timestamp: Clock.Continuous.Instant,
+            succeeded: Bool
+        ) {
+            self.effectType = effectType
+            self.effect = effect
+            self.timestamp = timestamp
+            self.succeeded = succeeded
         }
+    }
+    // swiftlint:enable no_any_protocol_existential
+}
 
-        /// Clears all recorded invocations.
-        public func reset() {
-            _invocations.withLock { $0.removeAll() }
+extension Effect.Test.Recorder {
+    /// All recorded invocations.
+    public var invocations: [Invocation] {
+        _invocations.withLock { $0 }
+    }
+
+    /// The number of recorded invocations.
+    public var count: Int {
+        _invocations.withLock { $0.count }
+    }
+
+    /// Records an invocation.
+    internal func record<E: Effect.`Protocol`>(_ effect: E, succeeded: Bool) where E: Sendable {
+        let invocation = Invocation(
+            effectType: E.self,
+            effect: effect,
+            timestamp: Clock.Continuous.now,
+            succeeded: succeeded
+        )
+        _invocations.withLock { $0.append(invocation) }
+    }
+
+    /// Clears all recorded invocations.
+    public func reset() {
+        _invocations.withLock { $0.removeAll() }
+    }
+
+    /// Returns all invocations of a specific effect type.
+    public func invocations<E: Effect.`Protocol`>(of type: E.Type) -> [E] {
+        _invocations.withLock {
+            $0.compactMap { $0.effect as? E }
         }
+    }
 
-        /// Returns all invocations of a specific effect type.
-        public func invocations<E: Effect.`Protocol`>(of type: E.Type) -> [E] {
-            _invocations.withLock {
-                $0.compactMap { $0.effect as? E }
-            }
-        }
-
-        /// Returns the count of invocations of a specific effect type.
-        public func count<E: Effect.`Protocol`>(of type: E.Type) -> Int {
-            _invocations.withLock {
-                $0.filter { $0.effect is E }.count
-            }
+    /// Returns the count of invocations of a specific effect type.
+    public func count<E: Effect.`Protocol`>(of type: E.Type) -> Int {
+        _invocations.withLock {
+            $0.filter { $0.effect is E }.count
         }
     }
 }

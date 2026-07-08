@@ -4,7 +4,7 @@ import Effects_Testing
 import Testing
 
 @Test
-func performReturnsHandlerValue() async {
+func `perform returns handler value`() async {
     // Define a simple test effect
     struct TestEffect: Effect.`Protocol`, EffectWithHandler {
         typealias Value = Int
@@ -35,7 +35,7 @@ func performReturnsHandlerValue() async {
 }
 
 @Test
-func performThrowsHandlerError() async throws {
+func `perform throws handler error`() async throws {
     struct TestError: Swift.Error, Equatable {}
 
     struct TestEffect: Effect.`Protocol`, EffectWithHandler {

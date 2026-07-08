@@ -3,14 +3,16 @@ import Effects_Testing
 import Testing
 
 struct TestEffect: Effect.`Protocol` {
-    typealias Value = String
-    typealias Failure = Never
-
     let input: Int
 }
 
+extension TestEffect {
+    typealias Value = String
+    typealias Failure = Never
+}
+
 @Test
-func handlerReturnsFixedValue() async {
+func `handler returns fixed value`() async {
     let handler = Effect.Test.Handler<TestEffect>(returning: "hello")
 
     let continuation = Effect.Continuation.one {
@@ -25,7 +27,7 @@ func handlerReturnsFixedValue() async {
 }
 
 @Test
-func handlerReturnsComputedValue() async {
+func `handler returns computed value`() async {
     let handler = Effect.Test.Handler<TestEffect>(returning: { effect in
         "value: \(effect.input)"
     })

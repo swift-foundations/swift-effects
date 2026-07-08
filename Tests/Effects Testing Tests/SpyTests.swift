@@ -3,14 +3,16 @@ import Effects_Testing
 import Testing
 
 struct CountEffect: Effect.`Protocol` {
-    typealias Value = Int
-    typealias Failure = Never
-
     let id: Int
 }
 
+extension CountEffect {
+    typealias Value = Int
+    typealias Failure = Never
+}
+
 @Test
-func spyRecordsInvocations() async {
+func `spy records invocations`() async {
     let spy = Effect.Test.Spy<CountEffect>(returning: 100)
 
     #expect(spy.callCount == 0)
@@ -31,7 +33,7 @@ func spyRecordsInvocations() async {
 }
 
 @Test
-func spyReset() async {
+func `spy reset`() async {
     let spy = Effect.Test.Spy<CountEffect>(returning: 100)
 
     let cont = Effect.Continuation.one {

@@ -5,7 +5,7 @@ import Effects_Testing
 import Testing
 
 @Test
-func yieldPerformsWithoutError() async {
+func `yield performs without error`() async {
     let yieldCount = Async.Mutex<Int>(0)
 
     let handler = Effect.Yield.Handler {
