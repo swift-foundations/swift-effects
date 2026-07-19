@@ -82,22 +82,38 @@ extension Effect.Exit.Handler.Key {
 
     /// Test value that captures exit requests without terminating.
     ///
-    /// This handler suspends indefinitely rather than exiting,
-    /// allowing tests to timeout or cancel the task.
+    /// This handler suspends rather than exiting. `Effect.perform` propagates
+    /// the calling task's cancellation into this handler's dispatch task (see
+    /// `Effect.perform`'s "Cancellation" doc), so once the surrounding
+    /// operation is cancelled, this handler stops retrying `Task.sleep` in a
+    /// loop and parks on an unresumed continuation instead — avoiding a
+    /// cancelled-but-still-spinning background task.
+    ///
+    /// - Important: Cancelling the surrounding task does NOT make
+    ///   `Effect.Exit.perform` itself return or throw — its `Value` is
+    ///   `Never`, so no outcome can ever resume that call, and this handler
+    ///   itself never returns either (parking, not exiting, once cancelled —
+    ///   matching the live handler's `fatalError` contract that `_handle`
+    ///   never returns normally). Tests that need to move past a call to
+    ///   `Effect.Exit.perform` (e.g., to assert an exit was requested with a
+    ///   given code) must race the OPERATION THAT CALLS `perform` from the
+    ///   outside — for example with `withThrowingTaskGroup`, discarding the
+    ///   losing branch — rather than expect cancellation to unblock `perform`
+    ///   itself.
     public static var testValue: Effect.Exit.Handler {
         Effect.Exit.Handler { _ in
-            // In test mode, we suspend indefinitely rather than exiting.
-            // Tests should use task cancellation or timeouts to handle this.
-            while true {
+            // In test mode, we suspend rather than exiting. Once the
+            // surrounding operation is cancelled, `Task.sleep` stops actually
+            // sleeping (it throws immediately on a cancelled task), so
+            // retrying it in a loop would busy-spin. Once cancellation is
+            // observed, park on a continuation that is deliberately never
+            // resumed instead — see the doc above for why this handler
+            // cannot exit (return) here.
+            while !Task.isCancelled {
                 await Task.yield()
-                do {
-                    try await Task.sleep(for: .seconds(3600))
-                } catch {
-                    // Cancellation (or any other Task.sleep failure) —
-                    // the loop simply retries, matching the previous
-                    // `try?` swallow-and-continue behavior.
-                }
+                try? await Task.sleep(for: .seconds(3600))
             }
+            await withCheckedContinuation { (_: CheckedContinuation<Never, Never>) in }
         }
     }
 }
