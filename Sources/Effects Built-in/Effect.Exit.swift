@@ -111,7 +111,13 @@ extension Effect.Exit.Handler.Key {
             // cannot exit (return) here.
             while !Task.isCancelled {
                 await Task.yield()
-                try? await Task.sleep(for: .seconds(3600))
+                // The only error `Task.sleep` raises is cancellation, which the
+                // loop condition above already re-checks on the next iteration —
+                // the error is deliberately discarded, not silently swallowed
+                // ([IMPL-108]).
+                do {
+                    try await Task.sleep(for: .seconds(3600))
+                } catch {}
             }
             await withCheckedContinuation { (_: CheckedContinuation<Never, Never>) in }
         }
