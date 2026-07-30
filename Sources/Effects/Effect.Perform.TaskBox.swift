@@ -50,8 +50,10 @@ extension Effect.Perform.TaskBox {
             case .pending:
                 current = .stored(task)
                 return false
+
             case .cancelledBeforeStore:
                 return true
+
             case .stored:
                 // `store` is only ever called once per box, from the single
                 // `withCheckedContinuation` resumer closure in `perform`.
@@ -73,8 +75,10 @@ extension Effect.Perform.TaskBox {
             case .pending:
                 current = .cancelledBeforeStore
                 return nil
+
             case .stored(let task):
                 return task
+
             case .cancelledBeforeStore:
                 return nil
             }
