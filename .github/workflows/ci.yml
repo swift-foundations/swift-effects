@@ -21,7 +21,7 @@ jobs:
   ci:
     if: ${{ !github.event.repository.private }}
     name: ci / matrix
-    uses: swift-institute/.github/.github/workflows/swift-ci.yml@feature/admin-cleanup
+    uses: swift-institute/.github/.github/workflows/swift-ci.yml@coenttb/package-ci-activation
     with:
       lint-bundle: institute
       tier: full
