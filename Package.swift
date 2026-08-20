@@ -1,15 +1,15 @@
-// swift-tools-version: 6.3.3
+// swift-tools-version: 6.4
 
 import PackageDescription
 
 let package = Package(
     name: "swift-effects",
     platforms: [
-        .macOS("27"),
-        .iOS("27"),
-        .tvOS("27"),
-        .watchOS("27"),
-        .visionOS("27")
+        .macOS(.v27),
+        .iOS(.v27),
+        .tvOS(.v27),
+        .watchOS(.v27),
+        .visionOS(.v27),
     ],
     products: [
         .library(
@@ -23,13 +23,25 @@ let package = Package(
         .library(
             name: "Effects Testing",
             targets: ["Effects Testing"]
-        )
+        ),
     ],
     dependencies: [
-        .package(url: "https://github.com/swift-primitives/swift-effect-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-dependency-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-witness-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-async-primitives.git", branch: "main"),
+        .package(
+            url: "https://github.com/swift-primitives/swift-effect-primitives.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-dependency-primitives.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-witness-primitives.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-async-primitives.git",
+            branch: "main"
+        ),
         .package(url: "https://github.com/swift-foundations/swift-clocks.git", branch: "main"),
     ],
     targets: [
@@ -37,7 +49,7 @@ let package = Package(
             name: "Effects",
             dependencies: [
                 .product(name: "Effect Primitives", package: "swift-effect-primitives"),
-                .product(name: "Dependency Primitives", package: "swift-dependency-primitives")
+                .product(name: "Dependency Primitives", package: "swift-dependency-primitives"),
             ]
         ),
         .target(
@@ -73,7 +85,7 @@ let package = Package(
         .testTarget(
             name: "Effects Testing Tests",
             dependencies: [
-                "Effects Testing",
+                "Effects Testing"
             ]
         ),
     ],
