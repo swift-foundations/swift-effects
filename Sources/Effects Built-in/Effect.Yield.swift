@@ -1,19 +1,12 @@
 public import Effects
 public import Witness_Primitives
 
-// MARK: - Yield Effect
-
 extension Effect {
-    /// An effect that yields control to the scheduler.
-    ///
-    /// In production, this delegates to `Task.yield()`.
-    /// In tests, this can be controlled for deterministic behavior.
+
     public struct Yield: Effect.`Protocol`, EffectWithHandler, Sendable {
         public init() {}
     }
 }
-
-// MARK: - Yield Typealiases
 
 extension Effect.Yield {
     public typealias Value = Void
@@ -21,10 +14,8 @@ extension Effect.Yield {
     public typealias HandlerKey = Handler.Key
 }
 
-// MARK: - Handler
-
 extension Effect.Yield {
-    /// Handler for yield effects.
+
     public struct Handler: Effect.Handler.`Protocol`, Sendable, Witness.`Protocol` {
         private let _handle: @Sendable () async -> Void
 
@@ -46,19 +37,15 @@ extension Effect.Yield.Handler {
     }
 }
 
-// MARK: - Live Handler
-
 extension Effect.Yield.Handler {
-    /// The live handler that delegates to `Task.yield()`.
+
     public static let live = Effect.Yield.Handler {
         await Task.yield()
     }
 }
 
-// MARK: - Handler Key
-
 extension Effect.Yield.Handler {
-    /// Context key for registering yield handlers.
+
     public struct Key: Dependency.Key {}
 }
 
@@ -69,10 +56,8 @@ extension Effect.Yield.Handler.Key {
     public static var testValue: Effect.Yield.Handler { .live }
 }
 
-// MARK: - Convenience
-
 extension Effect.Yield {
-    /// Performs a yield effect, suspending until the scheduler resumes.
+
     @inlinable
     public static func perform() async {
         await Effect.perform(Effect.Yield())

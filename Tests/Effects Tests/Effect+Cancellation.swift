@@ -11,20 +11,8 @@ extension Effect {
     }
 }
 
-// MARK: - Unit Tests
-
 extension Effect.Cancellation.Unit {
-    /// F-001: `Effect.perform`'s dispatch ran on a fully unstructured `Task`
-    /// (`Effect.perform.swift:92`, the infallible `Failure == Never` overload),
-    /// completely disconnected from the calling task's cancellation. A
-    /// cancellation-aware handler had no way to ever observe that the caller
-    /// had been cancelled — `Task.isCancelled` inside the dispatch task was
-    /// always `false`, even after the calling task was cancelled from outside.
-    ///
-    /// `perform` now propagates the calling task's cancellation into the
-    /// dispatch task via `withTaskCancellationHandler`, so a cancellation-aware
-    /// handler CAN observe it (though `perform` itself remains opaque to its
-    /// own suspension — see `Effect.perform`'s "Cancellation" doc).
+
     @Test
     func `infallible perform propagates caller cancellation to the handler dispatch task`() async {
         struct Probe: Effect.`Protocol`, EffectWithHandler {
@@ -37,9 +25,7 @@ extension Effect.Cancellation.Unit {
                 static var liveValue: Effect.Test.Handler<Probe> { testValue }
                 static var testValue: Effect.Test.Handler<Probe> {
                     Effect.Test.Handler { _ in
-                        // Poll for cancellation to reach this dispatch task.
-                        // Bounded so a pre-fix (disconnected) run fails fast
-                        // rather than hanging.
+
                         for _ in 0..<500 {
                             if Task.isCancelled { return .success(true) }
                             await Task.yield()
@@ -64,9 +50,6 @@ extension Effect.Cancellation.Unit {
         #expect(observedCancellation == true)
     }
 
-    /// F-001: same coverage as above for the fallible (`throws(E.Failure)`)
-    /// overload — `Effect.perform.swift:44`. The two `perform` overloads
-    /// dispatch independently, so each needs its own regression coverage.
     @Test
     func `fallible perform propagates caller cancellation to the handler dispatch task`() async {
         struct Probe: Effect.`Protocol`, EffectWithHandler {

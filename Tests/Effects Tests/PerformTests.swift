@@ -5,7 +5,7 @@ import Testing
 
 @Test
 func `perform returns handler value`() async {
-    // Define a simple test effect
+
     struct TestEffect: Effect.`Protocol`, EffectWithHandler {
         typealias Value = Int
         typealias Failure = Never
