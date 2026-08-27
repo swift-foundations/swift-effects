@@ -1,5 +1,5 @@
-import Dependency_Primitives
-public import Effect_Primitives
+import Dependency
+public import Effect
 
 extension Effect {
 

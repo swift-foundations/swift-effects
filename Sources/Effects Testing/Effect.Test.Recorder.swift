@@ -1,4 +1,4 @@
-import Async_Primitives
+import Async
 public import Clocks
 public import Effects
 

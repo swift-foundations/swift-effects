@@ -1,4 +1,4 @@
-import Effect_Primitives
+import Effect
 import Synchronization
 
 extension Effect.Perform {

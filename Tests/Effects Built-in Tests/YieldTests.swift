@@ -1,5 +1,5 @@
-import Async_Primitives
-import Dependency_Primitives
+import Async
+import Dependency
 import Effects_Built_in
 import Effects_Testing
 import Testing

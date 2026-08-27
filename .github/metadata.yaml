@@ -2,7 +2,7 @@
 # Triaged by AI-assisted bulk pass (2026-04-29).
 description: "Context-scoped effect handling with typed throws and swappable handlers for Swift."
 topics:
-  - foundations
+  - compositions
   - effects
 homepage: "https://swift-institute.org"
 readme:

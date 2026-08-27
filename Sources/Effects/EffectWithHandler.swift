@@ -1,5 +1,5 @@
-public import Dependency_Primitives
-public import Effect_Primitives
+public import Dependency
+public import Effect
 
 public protocol EffectWithHandler: Effect.`Protocol` {
 

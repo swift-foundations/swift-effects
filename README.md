@@ -18,7 +18,7 @@ An effect is a value describing *what* should happen. The handler deciding *how*
 ```swift
 import Effects
 import Effects_Testing
-import Dependency_Primitives
+import Dependency
 
 struct RollDice: Effect.`Protocol`, EffectWithHandler {
     typealias Value = Int
@@ -49,7 +49,7 @@ No versions are tagged yet; pin to `main`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/swift-foundations/swift-effects.git", branch: "main")
+    .package(url: "https://github.com/swift-compositions/swift-effects.git", branch: "main")
 ]
 ```
 
@@ -77,7 +77,7 @@ dependencies: [
 
 | Product | Module | When to import |
 |---|---|---|
-| `Effects` | `Effects` | Declaring and performing effects. Re-exports the effect and dependency primitives it builds on, so one import covers `Effect.perform`, `EffectWithHandler`, and `Effect.Context`. |
+| `Effects` | `Effects` | Declaring and performing effects. Re-exports the effect and dependency molecules it builds on, so one import covers `Effect.perform`, `EffectWithHandler`, and `Effect.Context`. |
 | `Effects Built-in` | `Effects_Built_in` | Ready-made `Effect.Exit` and `Effect.Yield`. Re-exports `Effects`. |
 | `Effects Testing` | `Effects_Testing` | Test doubles for asserting on performed effects. Test targets only. |
 

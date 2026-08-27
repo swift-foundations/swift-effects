@@ -1,4 +1,4 @@
-import Dependency_Primitives
+import Dependency
 import Effects
 import Effects_Testing
 import Testing

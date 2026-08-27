@@ -27,43 +27,43 @@ let package = Package(
     ],
     dependencies: [
         .package(
-            url: "https://github.com/swift-primitives/swift-effect-primitives.git",
+            url: "https://github.com/swift-molecules/swift-effect.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-primitives/swift-dependency-primitives.git",
+            url: "https://github.com/swift-molecules/swift-dependency.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-primitives/swift-witness-primitives.git",
+            url: "https://github.com/swift-molecules/swift-witness.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-primitives/swift-async-primitives.git",
+            url: "https://github.com/swift-molecules/swift-async.git",
             branch: "main"
         ),
-        .package(url: "https://github.com/swift-foundations/swift-clocks.git", branch: "main"),
+        .package(url: "https://github.com/swift-compositions/swift-clocks.git", branch: "main"),
     ],
     targets: [
         .target(
             name: "Effects",
             dependencies: [
-                .product(name: "Effect Primitives", package: "swift-effect-primitives"),
-                .product(name: "Dependency Primitives", package: "swift-dependency-primitives"),
+                .product(name: "Effect", package: "swift-effect"),
+                .product(name: "Dependency", package: "swift-dependency"),
             ]
         ),
         .target(
             name: "Effects Built-in",
             dependencies: [
                 "Effects",
-                .product(name: "Witness Primitives", package: "swift-witness-primitives"),
+                .product(name: "Witness", package: "swift-witness"),
             ]
         ),
         .target(
             name: "Effects Testing",
             dependencies: [
                 "Effects",
-                .product(name: "Async Primitives", package: "swift-async-primitives"),
+                .product(name: "Async", package: "swift-async"),
                 .product(name: "Clocks", package: "swift-clocks"),
             ]
         ),
@@ -79,7 +79,7 @@ let package = Package(
             dependencies: [
                 "Effects Built-in",
                 "Effects Testing",
-                .product(name: "Async Primitives", package: "swift-async-primitives"),
+                .product(name: "Async", package: "swift-async"),
             ]
         ),
         .testTarget(

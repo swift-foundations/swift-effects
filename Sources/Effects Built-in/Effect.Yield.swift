@@ -1,5 +1,5 @@
 public import Effects
-public import Witness_Primitives
+public import Witness
 
 extension Effect {
 
